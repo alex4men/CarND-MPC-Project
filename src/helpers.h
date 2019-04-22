@@ -60,4 +60,20 @@ VectorXd polyfit(const VectorXd &xvals, const VectorXd &yvals, int order) {
   return result;
 }
 
+/**
+ * Converts coordinates of a landmark from map frame to car frame.
+ * @param (x,y,theta) x, y and theta coordinates of a car
+ * @output coordinates of a waypoint in car's frame.
+ */
+inline std::vector<double> map2car(const double x, const double y, const double theta, 
+                                 const double wx, const double wy) {
+  // Transform the x and y coordinates
+  double x_car, y_car;
+
+  x_car = (wx - x) * cos(0-theta) - (wy - y) * sin(0-theta);
+  y_car = (wx - x) * sin(0-theta) + (wy - y) * cos(0-theta);
+  
+  return {x_car, y_car};
+}
+
 #endif  // HELPERS_H

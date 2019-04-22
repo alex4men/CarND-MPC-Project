@@ -2,6 +2,36 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+## Writeup
+
+![](media/MyBestRun.gif)
+
+This is my best run on 3x speed. 100ms delay is enabled, max speed set to 100mph.
+
+#### The model
+
+![](media/MPC.png)
+
+On the picture you can see the MPC model (screened from Udacity lecture). We have the initial state vector, which consists of X, Y coordinates of the car, its orientation (psi), speed (v), cross track error (CTE) and orientation error (Epsi).
+
+Then this vector, together with polynomial coefficients are fed into the solver, which considers car's constraints and its kinematic model, then optimises the cost function, finds the actuation commands (wheel angle — delta and acceleration) and predicts the future states.
+
+I used bicycle model as a motion model of the car, because it is very simple and easy to calculate, though it provides decent approximation to the car behaviour. The only customisable parameter here is the Lf, which measures the distance between the front of the vehicle and its center of gravity.
+
+#### Timestep Length and Elapsed Duration (N & dt)
+
+I found the values, advised by the mentors on Q&A session to be the most stable and reliable. N = 10, dt = 0.1, thus we can predict 1 second in the future. dt = 0.1 is good because it equals our system delay of 100 milliseconds. And N = 10 is good balance between performance and prediction horizon, on high speeds (60-90 mph) it sometimes predicts further than the farthest waypoint.
+
+#### Polynomial Fitting and MPC Preprocessing
+
+The waypoints are converted from the beginning to the car's coordinate frame. I wrote a simple function "map2car()" in "helpers.h". It takes x, y and orientation of the car and x, y of a waypoint in global frame, and outputs waypoints x' and y' in car's frame. It does so by applying translation and then rotation around z axis, almost like we did in the "Kidnapped robot" project.
+
+#### Model Predictive Control with Latency
+
+I handled the 100ms latency by feeding the actuators' values from t-1 timestep to calculate the movement from time t to t+1. I did it in constraints setup routine in the FG_eval class (MPC.cpp lines 134-136).
+
+Also I added two penalties to the cost function for overall smoothness and stability. On line 82 of MPC.cpp I've added penalty (speed*steering)^2 for aggressive steering on high speeds, on line 84 - penalty for rapid changes in CTE values. It made the car so much less wobbly. By fine tuning the weights of the components of the cost function I was able to run it with almost 100mph top speed!
+
 
 ## Dependencies
 
