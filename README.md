@@ -30,7 +30,7 @@ The waypoints are converted from the beginning to the car's coordinate frame. I 
 
 I handled the 100ms latency by feeding the actuators' values from t-1 timestep to calculate the movement from time t to t+1. I did it in constraints setup routine in the FG_eval class (MPC.cpp lines 134-136).
 
-Also I added two penalties to the cost function for overall smoothness and stability. On line 82 of MPC.cpp I've added penalty (speed*steering)^2 for aggressive steering on high speeds, on line 84 - penalty for rapid changes in CTE values. It made the car so much less wobbly. By fine tuning the weights of the components of the cost function I was able to run it with almost 100mph top speed!
+Also I added two penalties to the cost function for overall smoothness and stability. On the line 82 of MPC.cpp I've added penalty (speed*steering)^2 for aggressive steering on high speeds, on the line 84 - penalty for rapid changes in CTE values. It made the car so much less wobbly. By fine tuning the weights of the components of the cost function I was able to run it with almost 100mph top speed!
 
 
 ## Dependencies
